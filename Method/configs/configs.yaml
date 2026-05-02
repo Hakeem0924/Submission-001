@@ -1,0 +1,58 @@
+# configs/configs.yaml
+
+project_name: "vlm_efficiency_attack_universal"
+
+model:
+  # Default model configuration (will be dynamically overridden by main.py)
+  name: "llava-v1.5-7b"
+  path: "models/llava-hf-v1.5-7b" 
+  device: "cuda:0"          
+  batch_size: 24            # Default batch size (multi-gpu scripts will override this)
+  dtype: "float16"      
+  input_resolution: [336, 336]     
+
+  # Unified generation parameters (shared across all models to ensure determinism)
+  generation:
+    max_new_tokens: 1024
+    do_sample: False        # Disable sampling, use greedy search
+    temperature: 0.0
+    top_p: 1.0
+    top_k: 0
+    use_cache: True
+
+attack:
+  # HSJA (HopSkipJumpAttack) configurations
+  method: "HSJA"
+  target_threshold_ratio: 1.30
+  max_iter: 50              # Number of iterations
+  max_eval: 256             # Number of evaluations for gradient estimation
+  init_eval: 128            # Number of evaluations for initialization
+  batch_eval: 128           # Batch size for evaluation (should match VRAM capacity)
+  constraint: "l2"
+  l2_target_threshold: 1.0
+
+eogen:
+  # RUPE (Robust Universal Patch EOGen) core parameters
+  pop_size: 100             # Population size (can be set to 64-100 if VRAM allows)
+  generations: 100          # Number of evolutionary generations
+  top_k: 50                 # Number of elites to preserve
+  penalty_beta: 2.0         # Penalty coefficient for falling short of target length
+  
+  # Attack patch settings
+  num_attack_patches: 20    # Number of patches
+  patch_scale_ratio: 0.03   # Patch scale ratio relative to the shorter side (e.g., 3%)
+  patch_alpha: 1.0          # Alpha blending (0.5 = semi-transparent, 1.0 = opaque)
+  
+  # Texture bank settings
+  texture_bank_size: 100    # Texture bank capacity
+  internal_tex_res: 9       # Internal texture resolution (basis for anti-interpolation)
+  
+  log_dir: "data/logs"
+
+data:
+  input_image: "data/dataset/MSCOCO_500/test_010.jpg"  # Default path for single image testing
+  dataset_dir: "data/dataset/ImageNet_500"             # [NEW] Directory for batch testing dataset
+  output_dir: "data/results/ImageNet_500"
+
+prompt:
+  trigger: "Describe this image in detail."
