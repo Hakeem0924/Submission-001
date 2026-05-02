@@ -23,7 +23,7 @@ model:
 attack:
   # HSJA (HopSkipJumpAttack) configurations
   method: "HSJA"
-  target_threshold_ratio: 1.30
+  target_threshold_ratio: 2.00
   max_iter: 50              # Number of iterations
   max_eval: 256             # Number of evaluations for gradient estimation
   init_eval: 128            # Number of evaluations for initialization
