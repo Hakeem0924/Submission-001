@@ -21,7 +21,7 @@ BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 MODEL = "gpt-4o" # Ensure generic model name or specific target if evaluating specific versions
 
 # Testing Parameters
-IMAGE_PATH = "test_dataset/test_006_copy.jpg"  # Replaced "_副本" to avoid encoding/identity issues
+IMAGE_PATH = "test_dataset/test_006_copy.jpg"  
 OUTPUT_DIR = f"api_attack_results_{MODEL.replace('.', '_')}"
 PROMPT = "Describe this image in detail."
 
