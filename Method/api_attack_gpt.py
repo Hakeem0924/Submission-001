@@ -18,7 +18,7 @@ import tiktoken
 # Use environment variables or placeholders.
 API_KEY = os.getenv("OPENAI_API_KEY", "YOUR_API_KEY_HERE")
 BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1") 
-MODEL = "gpt-4o" # Ensure generic model name or specific target if evaluating specific versions
+MODEL = "gpt-5" 
 
 # Testing Parameters
 IMAGE_PATH = "test_dataset/test_006_copy.jpg"  
