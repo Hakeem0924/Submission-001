@@ -29,7 +29,6 @@ attack:
   init_eval: 128            # Number of evaluations for initialization
   batch_eval: 128           # Batch size for evaluation (should match VRAM capacity)
   constraint: "l2"
-  l2_target_threshold: 1.0
 
 eogen:
   # RUPE (Robust Universal Patch EOGen) core parameters
