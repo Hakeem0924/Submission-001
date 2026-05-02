@@ -15,7 +15,6 @@ import tiktoken
 # ==========================================
 # 1. API & Attack Configuration
 # ==========================================
-# [SECURITY FIX] Never hardcode real API keys in source code for academic submissions.
 # Use environment variables or placeholders.
 API_KEY = os.getenv("OPENAI_API_KEY", "YOUR_API_KEY_HERE")
 BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1") 
