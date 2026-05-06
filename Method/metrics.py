@@ -1,9 +1,6 @@
 import json
 import os
 
-# =====================================================================
-# Core Metrics 1 & 2: Text Degeneration (N-gram Repetition Ratio) and Length Expansion Ratio (LER)
-# =====================================================================
 def calculate_rep_n(words_list, n):
     """
     Calculate N-gram repetition ratio (rep-n)
@@ -27,20 +24,16 @@ def evaluate_efficiency_and_degeneration(clean_text, adv_text):
     len_clean = max(len(clean_words), 1)
     len_adv = len(adv_words)
     
-    # 1. Length Expansion Ratio (LER)
     ler = len_adv / len_clean
-    
-    # 2. Calculate complete rep-n for clean text (Baseline)
+
     clean_rep_2 = calculate_rep_n(clean_words, n=2)
     clean_rep_3 = calculate_rep_n(clean_words, n=3)
     clean_rep_4 = calculate_rep_n(clean_words, n=4)
-    
-    # 3. Calculate complete rep-n for adversarial text
+
     adv_rep_2 = calculate_rep_n(adv_words, n=2)
     adv_rep_3 = calculate_rep_n(adv_words, n=3)
     adv_rep_4 = calculate_rep_n(adv_words, n=4)
-    
-    # rep-4 > 0.2 (20%) typically indicates catastrophic looping/degeneration
+
     is_severe_degeneration = adv_rep_4 > 0.20 
 
     return {
@@ -56,12 +49,9 @@ def evaluate_efficiency_and_degeneration(clean_text, adv_text):
         "is_severe_degeneration": is_severe_degeneration
     }
 
-# =====================================================================
-# Core Metric 3: Targeted Adversarial Hallucination Rate (TAHR)
-# =====================================================================
+
 def evaluate_targeted_hallucination(clean_text, adv_text):
     """Detect specific digital artifact hallucinations induced by adversarial noise."""
-    # Exclusive probe lexicon for adversarial attacks
     artifact_lexicon = [
         "pixel", "pixelated", "qr code", "mosaic", "glitch", 
         "digital artifact", "watermark", "colorful square", "overlay",
@@ -73,8 +63,6 @@ def evaluate_targeted_hallucination(clean_text, adv_text):
     
     hit_words = []
     for word in artifact_lexicon:
-        # Strict validation: Appears in adversarial text but NOT in clean text 
-        # (excluding artifacts already present in the original image)
         if word in adv_lower and word not in clean_lower:
             hit_words.append(word)
             
@@ -83,9 +71,7 @@ def evaluate_targeted_hallucination(clean_text, adv_text):
         "hit_words": hit_words
     }
 
-# =====================================================================
-# Main Function: Pipeline processing and macro statistics
-# =====================================================================
+
 def main():
     INPUT_JSON = "blip_attack_results.json"
     OUTPUT_JSON = "blip_evaluation_new_metrics.json"
@@ -99,7 +85,6 @@ def main():
 
     print(f"[Success] Loaded {len(data)} items. Calculating academic evaluation metrics...\n")
 
-    # Accumulators for macro statistics
     stats = {
         "total_samples": len(data),
         "total_ler": 0.0,
@@ -117,15 +102,12 @@ def main():
         clean_text = item.get("clean_response", "")
         adv_text = item.get("adv_response", "")
 
-        # 1. Calculate efficiency and degeneration metrics
         eff_metrics = evaluate_efficiency_and_degeneration(clean_text, adv_text)
         item["efficiency_metrics"] = eff_metrics
         
-        # 2. Calculate targeted hallucination metrics
         hal_metrics = evaluate_targeted_hallucination(clean_text, adv_text)
         item["hallucination_metrics"] = hal_metrics
 
-        # Accumulate statistics
         stats["total_ler"] += eff_metrics["LER"]
         stats["total_clean_rep2"] += eff_metrics["clean_rep_2"]
         stats["total_clean_rep3"] += eff_metrics["clean_rep_3"]
@@ -139,7 +121,6 @@ def main():
         if hal_metrics["has_artifact_hallucination"]:
             stats["hallucination_count"] += 1
 
-    # Calculate averages
     N = stats["total_samples"]
     if N == 0:
         print("[Error] Sample count is 0, cannot calculate averages.")
@@ -155,9 +136,8 @@ def main():
     degeneration_rate = (stats["degeneration_count"] / N) * 100
     tahr_rate = (stats["hallucination_count"] / N) * 100
 
-    # Print statistical table formatted for paper inclusion
     print("="*65)
-    print(" 📊 VLM Adversarial Robustness Evaluation Results")
+    print("VLM Adversarial Robustness Evaluation Results")
     print("="*65)
     print(f"Total samples: {N}")
     print("\n[I] Inference Efficiency Cost")
