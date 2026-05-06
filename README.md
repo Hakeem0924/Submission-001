@@ -12,7 +12,7 @@ We recommend using Anaconda or Miniconda to manage the environment.
 conda create -n vlm_attack python=3.10 -y
 conda activate vlm_attack
 
-# Install PyTorch (Modify according to your CUDA version)
+# Install PyTorch
 pip install torch torchvision torchaudio --index-url 
 
 # Install required packages
