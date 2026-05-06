@@ -91,9 +91,6 @@ def worker_process(gpu_id, config_entry, base_config, phase1_root, phase2_root):
         os.makedirs(output_dir, exist_ok=True)
         
         log_csv_path = os.path.join(output_dir, "log_trace.csv")
-        # [DEBUG] Temporarily disable skipping for debugging
-        # if os.path.exists(log_csv_path):
-        #     continue
             
         print(f"[GPU {gpu_id}] Target: {img_name}")
         
