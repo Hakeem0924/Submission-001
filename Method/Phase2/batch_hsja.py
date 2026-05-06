@@ -189,10 +189,8 @@ def worker_process(gpu_id, config_entry, base_config, phase1_root, phase2_root):
             print(f"\n[GPU {gpu_id}] === Verification Report for {img_name} ===")
             
             # 1. Quantization Verification
-            # A. Float32 (In-Memory)
             len_float = wrapper.get_clean_length(x_adv_batch)
             
-            # B. UInt8 (Saved & Reloaded)
             save_path = os.path.join(output_dir, "hsja_result.png")
             save_adversarial_image(x_adv_single, save_path) # Save
             
@@ -204,14 +202,9 @@ def worker_process(gpu_id, config_entry, base_config, phase1_root, phase2_root):
             print(f"[Quantization] Float32 Len: {len_float} | PNG Loaded Len: {len_uint8} | Status: {quant_status}")
             
             # 2. Batch Consistency Verification
-            # A. Single Inference (Batch=1) - Already done as len_float
             len_single = len_float
-            
-            # B. Batch Inference (Batch=10)
-            # Replicate 10 copies
+
             x_batch_10 = np.tile(x_adv_single, (10, 1, 1, 1))
-            # The wrapper's default predict returns One-Hot Labels, but we need Lengths
-            # Accessing the wrapper's internal generate method
             try:
                 inputs_10 = wrapper._process_inputs(x_batch_10)
                 with torch.no_grad():
@@ -241,7 +234,7 @@ def worker_process(gpu_id, config_entry, base_config, phase1_root, phase2_root):
                 'FinalL2': final_l2,
                 'Queries': attacker.total_queries,
                 'Time': elapsed_time,
-                'FloatLen': len_float, # Record internal metric
+                'FloatLen': len_float, 
                 'QuantFail': (len_float > target_threshold and len_uint8 <= target_threshold)
             }])
             df.to_csv(log_csv_path, index=False)
