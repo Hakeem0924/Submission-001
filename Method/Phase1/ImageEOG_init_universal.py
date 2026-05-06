@@ -75,7 +75,6 @@ class UniversalPatchEOGenAttack:
             
         if not os.path.exists(self.progress_log_file) or os.path.getsize(self.progress_log_file) == 0:
             with open(self.progress_log_file, 'w') as f:
-                # [UPDATE] Add IterTime column
                 f.write("Gen,MaxLen,AvgLen,PoolSize,BestScore,L2Dist,IterTime,TotalTime,Queries\n")
 
     def _initialize_population(self):
@@ -255,7 +254,6 @@ class UniversalPatchEOGenAttack:
         return np.array(all_scores), np.array(all_lengths), current_gen_best_text
 
     def log_result(self, gen, max_len, avg_len, best_score, best_text, l2_dist, iter_time, total_time):
-        # [UPDATE] Add iter_time and total_time
         detail_entry = (
             f"[Gen {gen}/{self.generations}] MaxLen: {max_len} | Avg: {avg_len:.1f} | "
             f"L2: {l2_dist:.2f} | IterTime: {iter_time:.2f}s | TotalTime: {total_time:.2f}s | "
@@ -311,7 +309,7 @@ class UniversalPatchEOGenAttack:
         self.global_best_len = 0 
         
         for gen in range(1, self.generations + 1):
-            iter_start_time = time.time() # [NEW] Record generation start time
+            iter_start_time = time.time() 
             
             gen_progress = gen / self.generations
             scores, lengths, best_text = self._evaluate(population, base_image)
