@@ -17,11 +17,11 @@ from utils.image_utils import load_image_for_art
 # === Task List ===
 MODELS_TO_TEST = [
     {"name": "blip-large", "path": "models/blip-image-captioning-large", "batch_size": 100}
-    # {"name": "llava-v1.5-7b", "path": "models/llava-hf-v1.5-7b", "batch_size": 150}
+    # {"name": "llava-v1.5-7b", "path": "models/llava-hf-v1.5-7b", "batch_size": 100}
     # {"name": "qwen3-vl-8b", "path": "models/Qwen3-VL-8B-Instruct", "batch_size": 100}
     # {"name": "internvl3", "path": "models/InternVL3-8B", "batch_size": 100}
     # {"name": "qwen3-vl-2b", "path": "models/Qwen3-VL-2B-Instruct", "batch_size": 100}
-    # {"name": "qwen3-vl-4b", "path": "models/Qwen3-VL-4B-Instruct", "batch_size": 10}
+    # {"name": "qwen3-vl-4b", "path": "models/Qwen3-VL-4B-Instruct", "batch_size": 100}
     # {"name": "qwen3-vl-32b", "path": "models/Qwen3-VL-32B-Instruct", "batch_size": 100}
 ]
 
@@ -91,7 +91,6 @@ def worker_process(gpu_id, task_queue, base_config, run_id):
                     
                 except Exception as e:
                     print(f"[GPU {gpu_id}] Error on {img_name}: {e}")
-                    # [FIX] Must print traceback to locate the exact error
                     traceback.print_exc()
                     continue
             
@@ -99,7 +98,7 @@ def worker_process(gpu_id, task_queue, base_config, run_id):
             
             # Cleanup
             del wrapper
-            torch.cuda.empty_cache() # [FIX] torch is defined now, no more errors
+            torch.cuda.empty_cache() 
             
         except Exception as e:
             print(f"[GPU {gpu_id}] Critical Model Init Error: {e}")
