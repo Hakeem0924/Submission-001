@@ -25,8 +25,6 @@ def set_global_seed(seed=42):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    # torch.backends.cudnn.deterministic = True
-    # torch.backends.cudnn.benchmark = False
 
 # ==========================================
 # 1. Classical Defense Implementations (Defense Transformations)
@@ -115,7 +113,6 @@ class RobustnessEvaluator:
         # 1. Structured Data Logging (CSV)
         self.csv_path = os.path.join(self.output_dir, f"robustness_{self.model_name}_{run_id}.csv")
         with open(self.csv_path, 'w') as f:
-            # [NEW] Distinguish between Clean Origin and Adv Origin
             header = ["Image", "Type", "Original_Len", "Original_Time"]
             for q in self.defenses['JPEG']: header.extend([f"JPEG_{q}_Len", f"JPEG_{q}_Time"])
             for r in self.defenses['Blur']: header.extend([f"Blur_{r}_Len", f"Blur_{r}_Time"])
@@ -225,28 +222,18 @@ class RobustnessEvaluator:
         print(f"Model: {self.model_name}")
         print(f"Clean Images: {len(clean_paths)}, Adv Images: {len(adv_paths)}")
         
-        # Build a dictionary of Adv images for quick pair lookup
-        # Assuming clean is "test_001.jpg", adv is "hsja_result_test_001.png" or in a corresponding folder
-        # For general purpose, we match by filename (without extension)
         adv_dict = {os.path.splitext(os.path.basename(p))[0]: p for p in adv_paths}
         
         for idx, c_path in enumerate(tqdm(clean_paths)):
             c_name = os.path.splitext(os.path.basename(c_path))[0]
             
-            # 1. Evaluate Clean Image
             self.process_image(c_path, img_type="Clean", save_debug=(idx==0))
-            
-            # 2. Try to find and evaluate corresponding Adv Image
-            # In actual file structures, you may need to adjust the matching logic here
-            # For example, after hsja_phase2, the adv image might be named 'hsja_result.png' located in a folder named after the clean image
-            # Here is a general lookup method:
+
             a_path = None
             
-            # Try to match directly by filename
             if c_name in adv_dict:
                 a_path = adv_dict[c_name]
             else:
-                # Try fuzzy matching (e.g., if c_name is '001', a_path contains '001')
                 for k, v in adv_dict.items():
                     if c_name in k or c_name in v:
                         a_path = v
@@ -261,7 +248,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default="configs/configs.yaml")
     
-    # [NEW] Dual path input
     parser.add_argument("--clean_dir", type=str, required=True, help="Directory containing original clean images")
     parser.add_argument("--adv_dir", type=str, required=True, help="Directory containing generated adversarial images")
     
@@ -271,10 +257,8 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Global random seed")
     args = parser.parse_args()
     
-    # 0. Fix global seed
     set_global_seed(args.seed)
     
-    # 1. Load Config
     with open(args.config, 'r') as f:
         config = yaml.safe_load(f)
         
@@ -282,7 +266,6 @@ def main():
     if args.model_path:
         config['model']['path'] = args.model_path
         
-    # 2. Recursively get image lists
     clean_files = []
     for root, _, files in os.walk(args.clean_dir):
         for f in files:
@@ -301,12 +284,10 @@ def main():
     if not clean_files: raise ValueError(f"No clean images found in {args.clean_dir}")
     if not adv_files: raise ValueError(f"No adv images found in {args.adv_dir}")
         
-    # 3. Set output directory with timestamp
     import datetime
     run_id = datetime.datetime.now().strftime("%m%d_%H%M")
     output_dir = os.path.join(args.output_root, f"{args.model_name}_{run_id}")
     
-    # 4. Execute evaluation
     evaluator = RobustnessEvaluator(config, output_dir, run_id)
     evaluator.run(clean_files, adv_files)
     
