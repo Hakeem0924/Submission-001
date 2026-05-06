@@ -25,11 +25,11 @@ IMAGE_PATH = "test_dataset/test_006_copy.jpg"
 OUTPUT_DIR = f"api_attack_results_{MODEL.replace('.', '_')}"
 PROMPT = "Describe this image in detail."
 
-# Attack Hyperparameters (Keep small for initial API cost testing)
-POP_SIZE = 32              # Population size (originally 32)
-GENERATIONS = 10           # Iteration generations (originally 100)
-MAX_TARGET_TOKENS = 4096    # Max tokens allowed by API (prevent excessive costs)
-CONCURRENCY_LIMIT = 3      # Max concurrent API requests (prevent 429 errors)
+# Attack Hyperparameters 
+POP_SIZE = 32              # Population size 
+GENERATIONS = 10           # Iteration generations 
+MAX_TARGET_TOKENS = 4096    # Max tokens allowed by API 
+CONCURRENCY_LIMIT = 3      # Max concurrent API requests 
 
 # ==========================================
 # 2. Utility Functions & Base Classes
