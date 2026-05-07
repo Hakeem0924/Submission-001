@@ -21,7 +21,7 @@ BASE_URL = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 MODEL = "gpt-5" 
 
 # Testing Parameters
-IMAGE_PATH = "test_dataset/test_006_copy.jpg"  
+IMAGE_PATH = "test_dataset/test_001.jpg"  
 OUTPUT_DIR = f"api_attack_results_{MODEL.replace('.', '_')}"
 PROMPT = "Describe this image in detail."
 
@@ -29,7 +29,7 @@ PROMPT = "Describe this image in detail."
 POP_SIZE = 32              # Population size 
 GENERATIONS = 10           # Iteration generations 
 MAX_TARGET_TOKENS = 4096    # Max tokens allowed by API 
-CONCURRENCY_LIMIT = 3      # Max concurrent API requests 
+CONCURRENCY_LIMIT = 1      # Max concurrent API requests 
 
 # ==========================================
 # 2. Utility Functions & Base Classes
